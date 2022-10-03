@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "target": "es2015",
+        "lib": [
+            "es2017",
+            "es2015",
+            "dom",
+            "es6"
+        ],
+        "module": "CommonJS",
+        "outDir": "./bin",
+        "sourceMap": false,
+        "skipLibCheck": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true
+    },
+    "include": ["**/*.ts"],
+    "exclude": [
+        "node_modules",
+    ]
+}
