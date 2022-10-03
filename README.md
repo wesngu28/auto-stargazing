@@ -4,7 +4,9 @@
 
 Simple script written in Typescript to parse a npm generated package.json and a pip generated requirements.txt for their corresponding github repositories and stars them.
 
-![auto-stargazing cli](cli.png "Auto-Stargazing CLI")
+<p align="center">
+<img src="cli.png">
+</p>
 
 ## Installation/Running
 
