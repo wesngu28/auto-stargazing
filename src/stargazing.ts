@@ -120,19 +120,18 @@ const main = async () => {
             packageList =  await Promise.all(pipPackagefmt);
         }
         const starredRepos = await getStarredRepos(username, octokit)
-        const gitHubUrls = packageList.map((dependency: string) => {
+        let gitHubUrls = packageList.map((dependency: string) => {
             return `https://github.com/${dependency}`
-        })
-        let filteredStarStatus = gitHubUrls.filter(repo => repo !== undefined)
-        const removeDuplicate = [...new Set(filteredStarStatus)]
-        filteredStarStatus = Array.from(removeDuplicate)
-        const getUnstarredRepos = filteredStarStatus.map((dependency: string, idx: number) => {
+        }).filter(repo => repo !== undefined)
+        const removeDuplicate = [...new Set(gitHubUrls)]
+        gitHubUrls = Array.from(removeDuplicate)
+        const getUnstarredRepos = gitHubUrls.map((dependency: string, idx: number) => {
             if (starredRepos.includes(dependency!)) {
                 console.log(`You have already starred ${packageList[idx]}`)
             } else {
                 return dependency;
             }
-        })
+        }).filter(repo => repo !== undefined)
         for (const repo of getUnstarredRepos) {
             const authorSlashRepo = repo!.replace('https://github.com/', '')
             const split = authorSlashRepo.split('/')
@@ -157,8 +156,8 @@ const main = async () => {
               console.log(`Starred ${split[1]} by ${split[0]}`)
             }
         }
-    } catch {
-        console.error
+    } catch (err) {
+        console.log(err)
     }
 }
 
