@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { resolve } from 'path'
 import { Octokit } from "octokit"
 import * as dotenv from 'dotenv'
 import { readFileSync } from 'fs'
@@ -9,7 +10,7 @@ import querystring from 'query-string'
 import { findPackageOrRequirements, getStarredRepos } from "./starcrossed";
 const { Input, Confirm, Select } = require('enquirer');
 
-dotenv.config()
+dotenv.config(({ path: resolve(__dirname, '../env') }))
 
 const askUsePackage = new Confirm({
     name: 'existingPackage',
@@ -19,7 +20,7 @@ const askLocation = new Input({
     name: 'location',
     message: 'What is the absolute path of your dependencies file?',
     validate(value: string) {
-        return value ? true : `Please enter the absolute path.`
+        return value && (value.includes('requirements.txt') || value.includes('package.json')) ? true : `Please enter the absolute path.`
     },
 })
 const askUsername = new Input({
@@ -61,8 +62,9 @@ const main = async () => {
             GITHUB_TOKEN = await askToken.run()
         }
         const octokit = new Octokit({
-            auth: process.env.GITHUB_TOKEN,
+            auth: GITHUB_TOKEN,
         })
+        
         let absolutePath = findPackageOrRequirements(process.cwd(), language)
         if (absolutePath) {
             const usePackage = await askUsePackage.run()
