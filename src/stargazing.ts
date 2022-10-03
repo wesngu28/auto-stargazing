@@ -1,4 +1,4 @@
-#!/usr/bin/env npx ts-node
+#!/usr/bin/env node
 
 import { Octokit } from "octokit"
 import * as dotenv from 'dotenv'
@@ -7,7 +7,7 @@ import { parse } from 'node-html-parser'
 import fetch from 'node-fetch'
 import querystring from 'query-string'
 import { findPackageOrRequirements, getStarredRepos } from "./starcrossed";
-const { Input, Confirm, MultiSelect } = require('enquirer');
+const { Input, Confirm, Select } = require('enquirer');
 
 dotenv.config()
 
@@ -38,7 +38,7 @@ const askToken = new Input({
     message: 'You do not seem to have a GITHUB_TOKEN specified in your environment variables. Please provide one in a .env file or enter it here.'
 })
 
-const askLanguage = new MultiSelect({
+const askLanguage = new Select({
     name: 'language',
     message: 'Are you looking for package.json or requirements.txt?',
     validate(value: string[]) {
@@ -114,7 +114,6 @@ const main = async () => {
                     order: 'desc',
                 })
                 const potentialGithub = await octokit.request(`GET /search/repositories?${queryString}`)
-                console.log(potentialGithub)
                 const potentialGithubUrl = potentialGithub.data.items[0].full_name
                 return potentialGithubUrl
             })
@@ -130,17 +129,14 @@ const main = async () => {
         filteredStarStatus = Array.from(removeDuplicate)
         const getUnstarredRepos = filteredStarStatus.map((dependency: string, idx: number) => {
             if (starredRepos.includes(dependency!)) {
-                console.log(packageList[idx])
                 console.log(`You have already starred ${packageList[idx]}`)
             } else {
-                console.log(`You have yet to star ${packageList[idx]}`)
                 return dependency;
             }
         })
         for (const repo of getUnstarredRepos) {
             const authorSlashRepo = repo!.replace('https://github.com/', '')
             const split = authorSlashRepo.split('/')
-            console.log(split)
             if (perm) {
               const askStar = new Confirm({
                 name: 'question',

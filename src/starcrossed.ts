@@ -1,4 +1,4 @@
-import path from 'path'
+import { join, resolve } from 'path'
 import { Octokit } from "octokit"
 import { readdirSync, lstatSync } from 'fs'
 
@@ -6,12 +6,12 @@ export const findPackageOrRequirements = (dir = process.cwd(), fileType: string)
     let location = '';
     const files = readdirSync(dir);
     for (const file of files) {
-        const absolute = path.join(dir, file)
+        const absolute = join(dir, file)
         if (file === 'node_modules') {
             continue
         }
         if (absolute.includes(fileType)) {
-            location = path.resolve(absolute)
+            location = resolve(absolute)
         }
         if (lstatSync(absolute).isDirectory()) {
             findPackageOrRequirements(absolute, fileType)
