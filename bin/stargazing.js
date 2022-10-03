@@ -155,7 +155,6 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             packageList = yield Promise.all(pipPackagefmt);
         }
         const starredRepos = yield (0, starcrossed_1.getStarredRepos)(username, octokit);
-        console.log(starredRepos);
         const gitHubUrls = packageList.map((dependency) => {
             return `https://github.com/${dependency}`;
         });

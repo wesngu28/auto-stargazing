@@ -120,7 +120,6 @@ const main = async () => {
             packageList =  await Promise.all(pipPackagefmt);
         }
         const starredRepos = await getStarredRepos(username, octokit)
-        console.log(starredRepos)
         const gitHubUrls = packageList.map((dependency: string) => {
             return `https://github.com/${dependency}`
         })
