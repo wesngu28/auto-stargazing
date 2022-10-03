@@ -135,12 +135,12 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
                 return requirement;
             });
             const pipPackagefmt = pypiPackages.map((pipPackage) => __awaiter(void 0, void 0, void 0, function* () {
-                var _b;
+                var _a;
                 const pipName = `https://pypi.org/project/${pipPackage}`;
                 const response = yield (0, node_fetch_1.default)(`https://pypi.org/project/${pipPackage}`);
                 const text = yield response.text();
                 const html = (0, node_html_parser_1.parse)(text);
-                const github = (_b = html.querySelector('.github-repo-info')) === null || _b === void 0 ? void 0 : _b.getAttribute('data-url');
+                const github = (_a = html.querySelector('.github-repo-info')) === null || _a === void 0 ? void 0 : _a.getAttribute('data-url');
                 if (github)
                     return github.replace('https://api.github.com/repos/', '');
                 const queryString = query_string_1.default.stringify({
@@ -155,20 +155,19 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             packageList = yield Promise.all(pipPackagefmt);
         }
         const starredRepos = yield (0, starcrossed_1.getStarredRepos)(username, octokit);
-        const gitHubUrls = packageList.map((dependency) => {
+        let gitHubUrls = packageList.map((dependency) => {
             return `https://github.com/${dependency}`;
-        });
-        let filteredStarStatus = gitHubUrls.filter(repo => repo !== undefined);
-        const removeDuplicate = [...new Set(filteredStarStatus)];
-        filteredStarStatus = Array.from(removeDuplicate);
-        const getUnstarredRepos = filteredStarStatus.map((dependency, idx) => {
+        }).filter(repo => repo !== undefined);
+        const removeDuplicate = [...new Set(gitHubUrls)];
+        gitHubUrls = Array.from(removeDuplicate);
+        const getUnstarredRepos = gitHubUrls.map((dependency, idx) => {
             if (starredRepos.includes(dependency)) {
                 console.log(`You have already starred ${packageList[idx]}`);
             }
             else {
                 return dependency;
             }
-        });
+        }).filter(repo => repo !== undefined);
         for (const repo of getUnstarredRepos) {
             const authorSlashRepo = repo.replace('https://github.com/', '');
             const split = authorSlashRepo.split('/');
@@ -195,8 +194,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             }
         }
     }
-    catch (_a) {
-        console.error;
+    catch (err) {
+        console.log(err);
     }
 });
 main();

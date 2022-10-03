@@ -33,6 +33,19 @@ exports.findPackageOrRequirements = findPackageOrRequirements;
 const getStarredRepos = (username, octokit) => __awaiter(void 0, void 0, void 0, function* () {
     const repos = yield octokit.request(`GET /users/${username}/starred`);
     const starredRepoList = repos.data.map((repo) => { return repo.html_url; });
+    for (let i = 0; i < 10000; i++) {
+        const checkForMoreThanOneHundred = yield octokit.request(`GET /users/${username}/starred?page=${i}`);
+        if (checkForMoreThanOneHundred.data[0]) {
+            checkForMoreThanOneHundred.data.forEach((repo) => {
+                if (!starredRepoList.includes(repo.html_url)) {
+                    starredRepoList.push(repo.html_url);
+                }
+            });
+        }
+        else {
+            i = 10001;
+        }
+    }
     return starredRepoList;
 });
 exports.getStarredRepos = getStarredRepos;
