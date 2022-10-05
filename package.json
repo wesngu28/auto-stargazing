@@ -21,7 +21,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postbuild": "npx ts-node changeShebang.ts"
   },
   "repository": {
     "type": "git",

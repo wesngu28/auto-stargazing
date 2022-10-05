@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env npx ts-node
 
 import { resolve } from 'path'
 import { Octokit } from "octokit"

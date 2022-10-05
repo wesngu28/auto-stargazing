@@ -8,6 +8,7 @@
             "es6"
         ],
         "module": "CommonJS",
+        "rootDir": "./src",
         "outDir": "./bin",
         "sourceMap": false,
         "skipLibCheck": true,
@@ -18,7 +19,7 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true
     },
-    "include": ["**/*.ts"],
+    "include": ["./src/*.ts"],
     "exclude": [
         "node_modules",
     ]
