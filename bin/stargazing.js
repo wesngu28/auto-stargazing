@@ -36,6 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const path_1 = require("path");
 const octokit_1 = require("octokit");
 const dotenv = __importStar(require("dotenv"));
 const fs_1 = require("fs");
@@ -44,7 +45,7 @@ const node_fetch_1 = __importDefault(require("node-fetch"));
 const query_string_1 = __importDefault(require("query-string"));
 const starcrossed_1 = require("./starcrossed");
 const { Input, Confirm, Select } = require('enquirer');
-dotenv.config();
+dotenv.config(({ path: (0, path_1.resolve)(__dirname, '../env') }));
 const askUsePackage = new Confirm({
     name: 'existingPackage',
     message: 'An existing file was detected in your current folder. Would you like to use it?'
@@ -53,7 +54,7 @@ const askLocation = new Input({
     name: 'location',
     message: 'What is the absolute path of your dependencies file?',
     validate(value) {
-        return value ? true : `Please enter the absolute path.`;
+        return value && (value.includes('requirements.txt') || value.includes('package.json')) ? true : `Please enter the absolute path.`;
     },
 });
 const askUsername = new Input({
@@ -93,7 +94,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             GITHUB_TOKEN = yield askToken.run();
         }
         const octokit = new octokit_1.Octokit({
-            auth: process.env.GITHUB_TOKEN,
+            auth: GITHUB_TOKEN,
         });
         let absolutePath = (0, starcrossed_1.findPackageOrRequirements)(process.cwd(), language);
         if (absolutePath) {
