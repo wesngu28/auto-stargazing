@@ -1,6 +1,6 @@
 {
   "name": "auto-stargazing",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Script to star your package.json or requirements.txt dependencies",
   "main": "bin/stargazing.js",
   "bin": {
