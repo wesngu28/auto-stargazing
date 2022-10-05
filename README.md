@@ -16,7 +16,7 @@ You can run the script using npx by calling:
 npx auto-stargazing
 ```
 
-Alternatively, you can install it like a regular npm package and run it through node.
+Alternatively, you can install it like a regular npm package and run it through node by calling ./bin/stargazing.js.
 
 ```
 npm i auto-stargazing
