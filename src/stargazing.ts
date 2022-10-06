@@ -7,10 +7,10 @@ import { readFileSync } from 'fs'
 import { parse } from 'node-html-parser'
 import fetch from 'node-fetch'
 import querystring from 'query-string'
-import { findPackageOrRequirements, getStarredRepos } from "./starcrossed";
-const { Input, Confirm, Select } = require('enquirer');
+import { findPackageOrRequirements, getStarredRepos } from "./starcrossed"
+const { Input, Confirm, Select } = require('enquirer')
 
-dotenv.config(({ path: resolve(__dirname, '../env') }))
+dotenv.config(({ path: resolve(__dirname, '../.env') }))
 
 const askUsePackage = new Confirm({
     name: 'existingPackage',
@@ -23,13 +23,7 @@ const askLocation = new Input({
         return value && (value.includes('requirements.txt') || value.includes('package.json')) ? true : `Please enter the absolute path.`
     },
 })
-const askUsername = new Input({
-    name: 'username',
-    message: 'Please provide your GitHub username.',
-    validate(value: string) {
-        return value ? true : `Please enter your username.`
-    },
-})
+
 const askPermission = new Confirm({
     name: 'question',
     message: 'Would you like to confirm each package before starring?'
@@ -43,7 +37,7 @@ const askLanguage = new Select({
     name: 'language',
     message: 'Are you looking for package.json or requirements.txt?',
     validate(value: string[]) {
-        return value.length === 0 ? `Select at least one option.` : true;
+        return value.length === 0 ? `Select at least one option.` : true
     },
     limit: 2,
     choices: [
@@ -55,7 +49,6 @@ const askLanguage = new Select({
 const main = async () => {
     try {
         const language = await askLanguage.run()
-        const username = await askUsername.run()
         const perm: boolean = await askPermission.run()
         let GITHUB_TOKEN = process.env.GITHUB_TOKEN
         if(!GITHUB_TOKEN) {
@@ -69,18 +62,18 @@ const main = async () => {
         if (absolutePath) {
             const usePackage = await askUsePackage.run()
             if (!usePackage) {
-                absolutePath = await askLocation.run();
+                absolutePath = await askLocation.run()
             }
         } else {
-            absolutePath = await askLocation.run();
+            absolutePath = await askLocation.run()
         }
         let fileContents = readFileSync(absolutePath)
         let packageList: string[] = []
         if (absolutePath.includes('.json')) {
-            const parsedJson = JSON.parse(String(fileContents));
+            const parsedJson = JSON.parse(String(fileContents))
             const dependencies = Object.keys(parsedJson.dependencies)
             const devDependencies = Object.keys(parsedJson.devDependencies)
-            const npmPackages: string[] = [];
+            const npmPackages: string[] = []
             dependencies.forEach(dependencies => {
                 npmPackages.push(`https://www.npmjs.com/package/${dependencies}`)
             })
@@ -88,15 +81,15 @@ const main = async () => {
                 npmPackages.push(`https://www.npmjs.com/package/${devDependency}`)
             })
             const npmPackagefmt = npmPackages.map(async (dependency: string) => {
-                const response = await fetch(dependency);
-                const text = await response.text();
-                const html = parse(text);
+                const response = await fetch(dependency)
+                const text = await response.text()
+                const html = parse(text)
                 return html.querySelector('#repository-link')!.text.replace('github.com/', '')
             })
-            packageList = await Promise.all(npmPackagefmt);
+            packageList = await Promise.all(npmPackagefmt)
         }
         if (absolutePath.includes('.txt')) {
-            const textSplit = fileContents.toString().split("\n");
+            const textSplit = fileContents.toString().split("\n")
             const pypiPackages = textSplit.map((requirement) => {
                 const equals = requirement.indexOf('=')
                 const equalToEnd = requirement.substring(equals, requirement.length)
@@ -105,9 +98,9 @@ const main = async () => {
             })
             const pipPackagefmt = pypiPackages.map(async(pipPackage) => {
                 const pipName = `https://pypi.org/project/${pipPackage}`
-                const response = await fetch(`https://pypi.org/project/${pipPackage}`);
-                const text = await response.text();
-                const html = parse(text);
+                const response = await fetch(`https://pypi.org/project/${pipPackage}`)
+                const text = await response.text()
+                const html = parse(text)
                 const github = html.querySelector('.github-repo-info')?.getAttribute('data-url')
                 if (github) return github.replace('https://api.github.com/repos/', '')
                 const queryString = querystring.stringify({
@@ -119,9 +112,10 @@ const main = async () => {
                 const potentialGithubUrl = potentialGithub.data.items[0].full_name
                 return potentialGithubUrl
             })
-            packageList =  await Promise.all(pipPackagefmt);
+            packageList =  await Promise.all(pipPackagefmt)
         }
-        const starredRepos = await getStarredRepos(username, octokit)
+        const username = await octokit.request('GET /user', {})
+        const starredRepos = await getStarredRepos(username.data.login, octokit)
         let gitHubUrls = packageList.map((dependency: string) => {
             return `https://github.com/${dependency}`
         }).filter(repo => repo !== undefined)
@@ -131,7 +125,7 @@ const main = async () => {
             if (starredRepos.includes(dependency!)) {
                 console.log(`You have already starred ${packageList[idx]}`)
             } else {
-                return dependency;
+                return dependency
             }
         }).filter(repo => repo !== undefined)
         for (const repo of getUnstarredRepos) {

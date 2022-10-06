@@ -45,7 +45,7 @@ const node_fetch_1 = __importDefault(require("node-fetch"));
 const query_string_1 = __importDefault(require("query-string"));
 const starcrossed_1 = require("./starcrossed");
 const { Input, Confirm, Select } = require('enquirer');
-dotenv.config(({ path: (0, path_1.resolve)(__dirname, '../env') }));
+dotenv.config(({ path: (0, path_1.resolve)(__dirname, '../.env') }));
 const askUsePackage = new Confirm({
     name: 'existingPackage',
     message: 'An existing file was detected in your current folder. Would you like to use it?'
@@ -87,7 +87,6 @@ const askLanguage = new Select({
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const language = yield askLanguage.run();
-        const username = yield askUsername.run();
         const perm = yield askPermission.run();
         let GITHUB_TOKEN = process.env.GITHUB_TOKEN;
         if (!GITHUB_TOKEN) {
@@ -155,7 +154,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             }));
             packageList = yield Promise.all(pipPackagefmt);
         }
-        const starredRepos = yield (0, starcrossed_1.getStarredRepos)(username, octokit);
+        const username = yield octokit.request('GET /user', {});
+        const starredRepos = yield (0, starcrossed_1.getStarredRepos)(username.data.login, octokit);
         let gitHubUrls = packageList.map((dependency) => {
             return `https://github.com/${dependency}`;
         }).filter(repo => repo !== undefined);

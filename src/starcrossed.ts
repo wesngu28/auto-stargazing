@@ -3,8 +3,8 @@ import { Octokit } from "octokit"
 import { readdirSync, lstatSync } from 'fs'
 
 export const findPackageOrRequirements = (dir = process.cwd(), fileType: string) => {
-    let location = '';
-    const files = readdirSync(dir);
+    let location = ''
+    const files = readdirSync(dir)
     for (const file of files) {
         const absolute = join(dir, file)
         if (file === 'node_modules') {
@@ -18,7 +18,7 @@ export const findPackageOrRequirements = (dir = process.cwd(), fileType: string)
         }
     }
     return location
-};
+}
 
 export const getStarredRepos = async (username: string, octokit: Octokit) => {
     const repos = await octokit.request(`GET /users/${username}/starred`)
@@ -30,10 +30,10 @@ export const getStarredRepos = async (username: string, octokit: Octokit) => {
                 if(!starredRepoList.includes(repo.html_url)) {
                     starredRepoList.push(repo.html_url)
                 }
-            });
+            })
         } else {
-            i = 10001;
+            i = 10001
         }
     }
-    return starredRepoList;
+    return starredRepoList
 }
