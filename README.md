@@ -1,4 +1,4 @@
-# auto-stargazing
+# stargazing
 
 🎵 Rollin', 🎵 rollin', 🎵 rollin', got me ⭐ stargazin' 🌠
 
@@ -13,13 +13,13 @@ Simple script written in Typescript to parse a npm generated package.json and a 
 You can run the script using npx by calling:
 
 ```
-npx auto-stargazing
+npx stargazing
 ```
 
 Alternatively, you can install it like a regular npm package and run it through node by calling ./bin/stargazing.js.
 
 ```
-npm i auto-stargazing
+npm i stargazing
 ```
 
 To use this, you must provide your github personal access token in a .env or in the script context. [You can create a github personal access token here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) 
